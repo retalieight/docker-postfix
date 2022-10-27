@@ -5,6 +5,7 @@ usage() {
 if [ -z $1 ]; then usage; exit 1; fi
 email=$1
 alias_email=$2
+vmail_dir=$3
 if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
 	if ! grep -q "$alias_email" $vmail_dir/virtual_aliases; then
 		echo -n "Adding alias for $email to forward to $alias_email.."

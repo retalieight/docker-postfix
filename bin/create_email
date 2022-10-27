@@ -6,6 +6,7 @@ if [ -z $1 ]; then usage; exit 1; fi
 email=$1
 username=$(cut -f1 -d@ <<<$email);
 domain=$(cut -f2 -d@ <<<$email);
+vmail_dir=$3
 if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
 	if ! grep -q "$email" $vmail_dir/virtual_mailboxes; then
 		echo -n "Creating virtual mailbox directory $vmail_dir/$domain/$username.."
