@@ -12,6 +12,7 @@ services:
      - 'SERVER_HOSTNAME=mx.example.com'
      - 'MESSAGE_SIZE_LIMIT=52428800'
      - 'LOG_SUBJECT=yes'
+#     - 'SMTP_NETWORKS=10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16'
 #     - 'SSL_CERT_FILE=/change/this'
 #     - 'SSL_KEY_FILE=/change/this'
     volumes:

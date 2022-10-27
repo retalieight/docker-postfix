@@ -8,7 +8,7 @@ VOLUME /var/mail/vhosts
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache bash postfix postfix-pcre sed mailx && \
+    apk add --no-cache bash postfix postfix-pcre sed mailx certbot && \
     rm -rf /var/cache/apk/* && \
     sed -i -e 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 
