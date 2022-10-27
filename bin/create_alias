@@ -12,7 +12,7 @@ alias_username=$(cut -f2 -d@ <<<$alias_email);
 container_name=$3
 vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_base | awk '{print $NF}');
 valiases=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}');
-if [ -f $valiases ]; then
+if [ -f $valiases/virtual_aliases ]; then
 	if ! grep -q "$alias_email" $valiases/virtual_aliases; then
 		if [[ -d $vmail_dir/$alias_domain/$alias_username ]]; then
 			echo -n "Adding alias for $email to forward to $alias_email.."

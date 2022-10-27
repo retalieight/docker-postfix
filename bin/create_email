@@ -9,7 +9,7 @@ domain=$(cut -f2 -d@ <<<$email);
 container_name=$2
 vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_base | awk '{print $NF}');
 vmailboxes=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}');
-if [ -f $vmailboxes ]; then
+if [ -f $vmailboxes/virtual_mailboxes ]; then
 	if ! grep -q "$email" $vmailboxes/virtual_mailboxes; then
 		echo -n "Creating virtual mailbox directory $vmail_dir/$domain/$username.."
 		mkdir -p $vmail_dir/$domain/$username
