@@ -5,7 +5,6 @@ EXPOSE 25
 VOLUME /var/spool/postfix
 VOLUME /srv
 VOLUME /var/mail/vhosts
-VOLUME /etc/postfix/virtualmail-config
 
 RUN apk update && \
     apk upgrade && \

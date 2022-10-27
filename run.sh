@@ -1,17 +1,17 @@
 #!/bin/bash
 
 [ "${DEBUG}" == "yes" ] && set -x
-if [ ! -d '/etc/postfix/virtualmail-config' ]; then
-  /etc/postfix/virtualmail-config
+if [ ! -d '/etc/postfix/vhosts' ]; then
+  mkdir -p /etc/postfix/vhosts
 fi
-if [ ! -f '/etc/postfix/virtualmail-config/virtual_mailboxes' ]; then
-  touch /etc/postfix/virtualmail-config/virtual_mailboxes
+if [ ! -f '/etc/postfix/vhosts/virtual_mailboxes' ]; then
+  touch /etc/postfix/vhosts/virtual_mailboxes
 fi
-if [ ! -f '/etc/postfix/virtualmail-config/virtual_domains' ]; then
-  touch /etc/postfix/virtualmail-config/virtual_domains
+if [ ! -f '/etc/postfix/vhosts/virtual_domains' ]; then
+  touch /etc/postfix/vhosts/virtual_domains
 fi
-if [ ! -f '/etc/postfix/virtualmail-config/virtual_aliases' ]; then
-  touch /etc/postfix/virtualmail-config/virtual_aliases
+if [ ! -f '/etc/postfix/vhosts/virtual_aliases' ]; then
+  touch /etc/postfix/vhosts/virtual_aliases
 fi
 if [ "${ROOT_ALIAS}" ]; then
   sed -i "s/^#root:.*/root: ${ROOT_ALIAS}/g" /etc/postfix/aliases
@@ -76,20 +76,20 @@ if [ ! -z "${SMTP_NETWORKS}" ]; then
 fi
 add_config_value "mynetworks" "${nets}"
 
-add_config_value "virtual_mailbox_domains" "/etc/postfix/virtualmail-config/virtual_domains"
+add_config_value "virtual_mailbox_domains" "/etc/postfix/vhosts/virtual_domains"
 add_config_value "virtual_mailbox_base" "/var/mail/vhosts"
-if [ ! -f '/etc/postfix/virtualmail-config/virtual_mailboxes' ]; then
-  touch /etc/postfix/virtualmail-config/virtual_mailboxes
-  postmap /etc/postfix/virtualmail-config/virtual_mailboxes
+if [ ! -f '/etc/postfix/vhosts/virtual_mailboxes' ]; then
+  touch /etc/postfix/vhosts/virtual_mailboxes
+  postmap /etc/postfix/vhosts/virtual_mailboxes
 fi
-add_config_value "virtual_mailbox_maps" "hash:/etc/postfix/virtualmail-config/virtual_mailboxes"
-postmap /etc/postfix/virtualmail-config/virtual_mailboxes
-if [ ! -f '/etc/postfix/virtualmail-config/virtual_aliases' ]; then
-  touch /etc/postfix/virtualmail-config/virtual_aliases
-  postmap /etc/postfix/virtualmail-config/virtual_aliases
+add_config_value "virtual_mailbox_maps" "hash:/etc/postfix/vhosts/virtual_mailboxes"
+postmap /etc/postfix/vhosts/virtual_mailboxes
+if [ ! -f '/etc/postfix/vhosts/virtual_aliases' ]; then
+  touch /etc/postfix/vhosts/virtual_aliases
+  postmap /etc/postfix/vhosts/virtual_aliases
 fi
-add_config_value "virtual_alias_maps" "hash:/etc/postfix/virtualmail-config/virtual_aliases"
-postmap /etc/postfix/virtualmail-config/virtual_aliases
+add_config_value "virtual_alias_maps" "hash:/etc/postfix/vhosts/virtual_aliases"
+postmap /etc/postfix/vhosts/virtual_aliases
 add_config_value "virtual_minimum_uid" "100"
 add_config_value "virtual_uid_maps" "static:101"
 add_config_value "virtual_gid_maps" "static:101"

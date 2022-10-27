@@ -14,4 +14,5 @@ services:
      - 'LOG_SUBJECT=yes'
     volumes:
      - "/etc/localtime:/etc/localtime:ro"
-     - "/opt/docker/postfix/virtualmail-config/:/etc/postfix/virtualmail-config/"
+     - "/opt/docker/postfix/vhosts:/var/mail/vhosts"
+     - "/opt/docker/postfix/config:/etc/postfix/vhosts"

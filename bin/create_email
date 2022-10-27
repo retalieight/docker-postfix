@@ -7,22 +7,21 @@ email=$1
 username=$(cut -f1 -d@ <<<$email);
 domain=$(cut -f2 -d@ <<<$email);
 container_name=$2
-vmail_dir=$(docker exec -ti $container_name postconf | grep virtual_mailbox_base | awk '{print $NF}')
-if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
-	if ! grep -q "$email" $vmail_dir/virtual_mailboxes; then
+vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_base | awk '{print $NF}');
+vmailboxes=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_domains | awk '{print $NF}');
+if [ -f $vmailboxes ]; then
+	if ! grep -q "$email" $vmailboxes; then
 		echo -n "Creating virtual mailbox directory $vmail_dir/$domain/$username.."
 		mkdir -p $vmail_dir/$domain/$username
 		echo "done."
 		echo -n "Adding mailbox $email to virtual mailbox configuration file.."
-		echo "$email $domain/$username/" >> $vmail_dir/virtual_mailboxes
+		echo "$email $domain/$username/" >> $vmailboxes
 		echo "done."
 		echo "Restart Docker container to reload configuration changes."
 	else
 		echo "E-mail $email already exists in the virtual mailbox configuration file. Maybe you need to restart the Docker container?"
 	fi
 else
-	echo "Virtual mailbox directory ($vmail_dir) does not exist! Check your Docker volume path."
-        echo "docker exec -ti postfix /bin/sh"
-        echo "postconf | grep virtual_mailbox_base"
+	echo "Virtual mailbox configuration file ($vmailboxes) could not be found!"
 	exit 1
 fi
