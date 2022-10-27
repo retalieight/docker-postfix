@@ -5,10 +5,10 @@ usage() {
 if [ -z $1 ]; then usage; exit 1; fi
 domain=$1
 container_name=$2
-vdomains=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_domains | awk '{print $NF}');
-if ! grep -q "$domain" $vdomains; then
-	echo -n "Adding domain $domain to virtual domain configuration file ($vdomains).."
-	echo "$domain" >> $vdomains
+vdomains=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}');
+if ! grep -q "$domain" $vdomains/virtual_domains; then
+	echo -n "Adding domain $domain to virtual domain configuration file ($vdomains/virtual_domains).."
+	echo "$domain" >> $vdomains/virtual_domains
 	echo "done."
 	echo "Restart Docker container to reload configuration changes."
 else

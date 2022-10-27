@@ -11,12 +11,12 @@ alias_domain=$(cut -f1 -d@ <<<$alias_email);
 alias_username=$(cut -f2 -d@ <<<$alias_email);
 container_name=$3
 vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_base | awk '{print $NF}');
-valiases=$(docker exec -ti $container_name postconf | grep ^virtual_alias_maps | awk -F: '{print $NF}');
+valiases=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}');
 if [ -f $valiases ]; then
-	if ! grep -q "$alias_email" $valiases; then
+	if ! grep -q "$alias_email" $valiases/virtual_aliases; then
 		if [[ -d $vmail_dir/$alias_domain/$alias_username ]]; then
 			echo -n "Adding alias for $email to forward to $alias_email.."
-			echo "$email $alias_email" >> $valiases
+			echo "$email $alias_email" >> $valiases/virtual_aliases
 			echo "done."
 			echo "Restart Docker container to reload configuration changes."
 		else
@@ -27,6 +27,6 @@ if [ -f $valiases ]; then
 		echo "Alias $alias_email already exists in the virtual aliases configuration file. Maybe you need to restart the Docker container?"
 		exit 1
 	fi
-	echo "Alias configuration file ($valiases) could not be found!"
+	echo "Alias configuration file ($valiases/virtual_aliases) could not be found!"
 	exit 1
 fi

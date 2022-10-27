@@ -8,20 +8,20 @@ username=$(cut -f1 -d@ <<<$email);
 domain=$(cut -f2 -d@ <<<$email);
 container_name=$2
 vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_base | awk '{print $NF}');
-vmailboxes=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_domains | awk '{print $NF}');
+vmailboxes=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}');
 if [ -f $vmailboxes ]; then
-	if ! grep -q "$email" $vmailboxes; then
+	if ! grep -q "$email" $vmailboxes/virtual_mailboxes; then
 		echo -n "Creating virtual mailbox directory $vmail_dir/$domain/$username.."
 		mkdir -p $vmail_dir/$domain/$username
 		echo "done."
 		echo -n "Adding mailbox $email to virtual mailbox configuration file.."
-		echo "$email $domain/$username/" >> $vmailboxes
+		echo "$email $domain/$username/" >> $vmailboxes/virtual_mailboxes
 		echo "done."
 		echo "Restart Docker container to reload configuration changes."
 	else
 		echo "E-mail $email already exists in the virtual mailbox configuration file. Maybe you need to restart the Docker container?"
 	fi
 else
-	echo "Virtual mailbox configuration file ($vmailboxes) could not be found!"
+	echo "Virtual mailbox configuration file ($vmailboxes/virtual_mailboxes) could not be found!"
 	exit 1
 fi
