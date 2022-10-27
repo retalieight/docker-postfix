@@ -24,5 +24,8 @@ SSL_KEY_FILE=/path/to/ssl.key<br>
 | Binary      | Description |
 | ----------- | ----------- |
 | bin/create_alias      | Create a mailbox alias       |
-| bin/create_domain   | Add a domain name        |
+| bin/create_domain   | Add a domain name (Add your domains first)        |
 | bin/create_mailbox | Create a mailbox        |
+
+## SSL Certificates:
+certbot is installed on the container if you want to use it you can log into the container through `docker exec -ti postfix /bin/sh` then run `certbot -h` or you can run https://hub.docker.com/r/adferrand/dnsrobocert and set that up instead then configure the SSL environment variables for your domains (wildcard, sub-domains, or domains).
