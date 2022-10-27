@@ -1,10 +1,11 @@
 #!/bin/bash
 usage() {
-	echo "Usage: $0 somedomain.com [vmail directory]"
+	echo "Usage: $0 somedomain.com [container name]"
 }
 if [ -z $1 ]; then usage; exit 1; fi
 domain=$1
-vmail_dir=$2
+container_name=$2
+vmail_dir=$(docker exec -ti $container_name postconf | grep virtual_mailbox_base | awk '{print $NF}');
 if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
 	if ! grep -q "$domain" $vmail_dir/virtual_domains; then
 		echo -n "Adding domain $domain to virtual domain configuration file ($vmail_dir/virtual_domains).."

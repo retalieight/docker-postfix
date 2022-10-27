@@ -1,6 +1,6 @@
 #!/bin/bash
 usage() {
-	echo "Usage: $0 user@somedomain.com user@someotherdomain.com [vmail directory]"
+	echo "Usage: $0 user@somedomain.com user@someotherdomain.com [container name]"
 }
 if [ -z $1 ]; then usage; exit 1; fi
 email=$1
@@ -9,7 +9,8 @@ domain=$(cut -f2 -d@ <<<$email);
 alias_email=$2
 alias_domain=$(cut -f1 -d@ <<<$alias_email);
 alias_username=$(cut -f2 -d@ <<<$alias_email);
-vmail_dir=$3
+container_name=$3
+vmail_dir=$(docker exec -ti $container_name postconf | grep virtual_mailbox_base | awk '{print $NF}');
 if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
 	if ! grep -q "$alias_email" $vmail_dir/virtual_aliases; then
 		if [[ -d $vmail_dir/$domain/$username ]] && [[ -d $vmail_dir/$alias_domain/$alias_username ]]; then
