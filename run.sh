@@ -83,7 +83,7 @@ if [ ! -f '/etc/postfix/vhosts/virtual_mailboxes' ]; then
   postmap /etc/postfix/vhosts/virtual_mailboxes
 fi
 if [ -s '/etc/postfix/vhosts/virtual_mailboxes' ]; then
-	awk '{print $NF}' /etc/postfix/vhosts/virtual_mailboxes | while read mailbox; do if [ ! -d "/var/mail/vhosts/$mailbox" ]; then mkdir -p /var/mail/vhosts/$mailbox; fi; done
+	awk '{print $NF}' /etc/postfix/vhosts/virtual_mailboxes | while read mailbox; do if [ ! -d "/var/mail/vhosts/$mailbox" ]; then mkdir -p /var/mail/vhosts/$mailbox; chown -R vmail:postfix /var/mail/vhosts && chmod -R 775 /var/mail/vhosts; fi; done
 fi 
 add_config_value "virtual_mailbox_maps" "lmdb:/etc/postfix/vhosts/virtual_mailboxes"
 postmap /etc/postfix/vhosts/virtual_mailboxes

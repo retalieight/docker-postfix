@@ -17,6 +17,6 @@ COPY run.sh /
 RUN chmod +x /run.sh
 RUN newaliases
 
-RUN addgroup vmail postfix && chown -R vmail:postfix /var/mail/vhosts && chmod -R 775 /var/mail/vhosts
+RUN addgroup vmail postfix
 
 CMD ["./run.sh"]

@@ -3,7 +3,7 @@ version: '3.6'
 services:
   postfix:
     container_name: postfix
-    image: retali8/postfix:1.4
+    image: retali8/postfix:1.5
     ports:
      - '25:25'
     restart: always
