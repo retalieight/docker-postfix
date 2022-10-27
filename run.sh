@@ -107,10 +107,16 @@ if [ ! -z "${MESSAGE_SIZE_LIMIT}" ]; then
   echo "Setting configuration option message_size_limit with value: ${MESSAGE_SIZE_LIMIT}"
 fi
 
-if [ ! -z "${SSL_CERT_FILE}" ]; then
+if [ ! -z "${SSL_CERT_FILE}" ] && [ ! -z "${SSL_KEY_FILE}" ]; then
+  add_config_value "smtpd_use_tls" "yes"
+  add_config_value "smtpd_tls_security_level" "may"
+  add_config_value "smtpd_tls_auth_only" "no"
+  add_config_value "smtpd_tls_session_cache_database" 'sdbm:${data_directory}/smtpd_scache'
+  add_config_value "smtpd_tls_received_header" "yes"
+  add_config_value "smtpd_tls_security_level" "may"
+  add_config_value "smtp_tls_security_level" "may"
+  add_config_value "tls_random_source" "dev:/dev/urandom"
   postconf -e "smtpd_tls_cert_file = ${SSL_CERT_FILE}"
-fi
-if [ ! -z "${SSL_KEY_FILE}" ]; then
   postconf -e "smtpd_tls_key_file = ${SSL_KEY_FILE}"
 fi
 

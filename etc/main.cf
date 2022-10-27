@@ -674,16 +674,6 @@ sample_directory = /etc/postfix
 #
 readme_directory = /usr/share/doc/postfix/readme
 
-##TLS##
-smtpd_use_tls = yes
-smtpd_tls_security_level = may
-smtpd_tls_auth_only = no
-smtpd_tls_session_cache_database = sdbm:${data_directory}/smtpd_scache
-smtpd_tls_received_header = yes
-smtpd_tls_security_level = may
-smtp_tls_security_level = may
-tls_random_source = dev:/dev/urandom
-
 ##restrictions##
 smtpd_helo_required = no
 smtpd_delay_reject = yes
