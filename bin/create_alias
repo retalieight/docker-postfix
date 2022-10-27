@@ -4,14 +4,20 @@ usage() {
 }
 if [ -z $1 ]; then usage; exit 1; fi
 email=$1
+username=$(cut -f1 -d@ <<<$email);
+domain=$(cut -f2 -d@ <<<$email);
 alias_email=$2
+alias_domain=$(cut -f1 -d@ <<<$alias_email);
+alias_username=$(cut -f2 -d@ <<<$alias_email);
 vmail_dir=$3
 if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
 	if ! grep -q "$alias_email" $vmail_dir/virtual_aliases; then
-		echo -n "Adding alias for $email to forward to $alias_email.."
-		echo "$email $alias_email" >> $vmail_dir/virtual_aliases
-		echo "done."
-		echo "Restart Docker container to reload configuration changes."
+		if [[ -d $vmail_dir/$domain/$username ]] && [[ -d $vmail_dir/$alias_domain/$alias_username ]]; then
+			echo -n "Adding alias for $email to forward to $alias_email.."
+			echo "$email $alias_email" >> $vmail_dir/virtual_aliases
+			echo "done."
+			echo "Restart Docker container to reload configuration changes."
+		fi
 	else
 		echo "Alias $alias_email already exists in the virtual aliases configuration file. Maybe you need to restart the Docker container?"
 	fi
