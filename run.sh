@@ -83,7 +83,7 @@ if [ ! -f '/etc/postfix/vhosts/virtual_mailboxes' ]; then
   postmap /etc/postfix/vhosts/virtual_mailboxes
 fi
 if [ -s '/etc/postfix/vhosts/virtual_mailboxes' ]; then
-	awk '{print $NF}' /etc/postfix/vhosts/virtual_mailboxes | while read mailbox; do if [ ! -d "/var/mail/vhosts/$mailbox" ]; then mkdir -p /var/mail/vhosts/$mailbox; chown -R vmail:postfix /var/mail/vhosts && chmod -R 775 /var/mail/vhosts; fi; done
+	awk '{print $NF}' /etc/postfix/vhosts/virtual_mailboxes | while read mailbox; do if [ ! -d "/var/mail/vhosts/$mailbox" ]; then mkdir -p /var/mail/vhosts/$mailbox && chown -R vmail:postfix /var/mail/vhosts/$mailbox && chmod -R 775 /var/mail/vhosts/$mailbox; fi; done
 fi 
 add_config_value "virtual_mailbox_maps" "lmdb:/etc/postfix/vhosts/virtual_mailboxes"
 postmap /etc/postfix/vhosts/virtual_mailboxes
@@ -94,7 +94,7 @@ fi
 add_config_value "virtual_alias_maps" "lmdb:/etc/postfix/vhosts/virtual_aliases"
 postmap /etc/postfix/vhosts/virtual_aliases
 add_config_value "virtual_minimum_uid" "100"
-add_config_value "virtual_uid_maps" "static:101"
+add_config_value "virtual_uid_maps" "static:100"
 add_config_value "virtual_gid_maps" "static:101"
 add_config_value "virtual_transport" "virtual"
 add_config_value "virtual_mailbox_limit" "104857600"
