@@ -1,0 +1,17 @@
+version: '3.6'
+
+services:
+  postfix:
+    container_name: postfix
+    image: retali8/postfix:1.0
+    expose:
+    - "25"
+    restart: always
+    environment:
+     - 'ROOT_ALIAS=admin@example.com'
+     - 'SERVER_HOSTNAME=mx.example.com'
+     - 'MESSAGE_SIZE_LIMIT=52428800'
+     - 'LOG_SUBJECT=yes'
+    volumes:
+     - "/etc/localtime:/etc/localtime:ro"
+     - "/opt/docker/postfix/virtualmail-config/:/etc/postfix/virtualmail-config/"

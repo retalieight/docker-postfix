@@ -1,0 +1,22 @@
+#!/bin/bash
+usage() {
+	echo "Usage: $0 user@somedomain.com user@someotherdomain.com [vmail directory]"
+}
+if [ -z $1 ]; then usage; exit 1; fi
+email=$1
+alias_email=$2
+if [[ ! -z $vmail_dir ]] && [[ -d $vmail_dir ]]; then
+	if ! grep -q "$alias_email" $vmail_dir/virtual_aliases; then
+		echo -n "Adding alias for $email to forward to $alias_email.."
+		echo "$email $alias_email" >> $vmail_dir/virtual_aliases
+		echo "done."
+		echo "Restart Docker container to reload configuration changes."
+	else
+		echo "Alias $alias_email already exists in the virtual aliases configuration file. Maybe you need to restart the Docker container?"
+	fi
+else
+	echo "Virtual mailbox directory ($vmail_dir) does not exist! Check your Docker volume path."
+	echo "docker exec -ti postfix /bin/sh"
+	echo "postconf | grep virtual_mailbox_base"
+	exit 1
+fi
