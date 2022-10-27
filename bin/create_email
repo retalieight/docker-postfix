@@ -11,9 +11,6 @@ vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_bas
 vmailboxes=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}');
 if [ -f $vmailboxes/virtual_mailboxes ]; then
 	if ! grep -q "$email" $vmailboxes/virtual_mailboxes; then
-		echo -n "Creating virtual mailbox directory $vmail_dir/$domain/$username.."
-		mkdir -p $vmail_dir/$domain/$username
-		echo "done."
 		echo -n "Adding mailbox $email to virtual mailbox configuration file.."
 		echo "$email $domain/$username/" >> $vmailboxes/virtual_mailboxes
 		echo "done."
