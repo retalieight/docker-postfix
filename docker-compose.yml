@@ -4,8 +4,8 @@ services:
   postfix:
     container_name: postfix
     image: retali8/postfix:1.1
-    expose:
-    - "25"
+    ports:
+     - '25:25'
     restart: always
     environment:
      - 'ROOT_ALIAS=admin@example.com'
