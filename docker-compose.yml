@@ -3,7 +3,7 @@ version: '3.6'
 services:
   postfix:
     container_name: postfix
-    image: retali8/postfix:1.2
+    image: retali8/postfix:1.3
     ports:
      - '25:25'
     restart: always
@@ -12,6 +12,8 @@ services:
      - 'SERVER_HOSTNAME=mx.example.com'
      - 'MESSAGE_SIZE_LIMIT=52428800'
      - 'LOG_SUBJECT=yes'
+#     - 'SSL_CERT_FILE=/change/this'
+#     - 'SSL_KEY_FILE=/change/this'
     volumes:
      - "/etc/localtime:/etc/localtime:ro"
      - "/opt/docker/postfix/vhosts:/var/mail/vhosts"
