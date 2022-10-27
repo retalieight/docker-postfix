@@ -52,7 +52,7 @@ if [ "${LOG_SUBJECT}" == "yes" ]; then
 fi
 
 #Check for subnet restrictions
-nets=''
+nets='127.0.0.1/32'
 if [ ! -z "${SMTP_NETWORKS}" ]; then
   declare ipv6re="^((([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|\
     ([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|\
