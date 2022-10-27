@@ -14,15 +14,10 @@ vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_bas
 valiases=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}' | tr -d '[');
 if [ -f $valiases/virtual_aliases ]; then
 	if ! grep -q "$alias_email" $valiases/virtual_aliases; then
-		if [[ -d $vmail_dir/$alias_domain/$alias_username ]]; then
 			echo -n "Adding alias for $email to forward to $alias_email.."
 			echo "$email $alias_email" >> $valiases/virtual_aliases
 			echo "done."
 			echo "Restart Docker container to reload configuration changes."
-		else
-			echo "The alias mailbox does not exist ($vmail_dir/$alias_domain/$alias_username)!"
-			exit 1
-		fi
 	else
 		echo "Alias $alias_email already exists in the virtual aliases configuration file. Maybe you need to restart the Docker container?"
 		exit 1
