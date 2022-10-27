@@ -22,6 +22,7 @@ if [ -f $valiases/virtual_aliases ]; then
 		echo "Alias $alias_email already exists in the virtual aliases configuration file. Maybe you need to restart the Docker container?"
 		exit 1
 	fi
+else
 	echo "Alias configuration file ($valiases/virtual_aliases) could not be found!"
 	exit 1
 fi
