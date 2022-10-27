@@ -82,6 +82,9 @@ if [ ! -f '/etc/postfix/vhosts/virtual_mailboxes' ]; then
   touch /etc/postfix/vhosts/virtual_mailboxes
   postmap /etc/postfix/vhosts/virtual_mailboxes
 fi
+if [ -s '/etc/postfix/vhosts/virtual_mailboxes' ]; then
+	awk '{print $NF}' /etc/postfix/vhosts/virtual_mailboxes | while read mailbox; do if [ ! -d "/var/mail/vhosts/$mailbox" ]; then mkdir -p /var/mail/vhosts/$mailbox; fi; done
+fi 
 add_config_value "virtual_mailbox_maps" "hash:/etc/postfix/vhosts/virtual_mailboxes"
 postmap /etc/postfix/vhosts/virtual_mailboxes
 if [ ! -f '/etc/postfix/vhosts/virtual_aliases' ]; then
