@@ -2,23 +2,31 @@
 usage() {
 	echo "Usage: $0 user@somedomain.com [container name]"
 }
-if [ -z $1 ] || [ -z $2 ]; then usage; exit 1; fi
+if [ -z $1 ]; then usage; exit 1; fi
 email=$1
 username=$(cut -f1 -d@ <<<$email);
 domain=$(cut -f2 -d@ <<<$email);
 container_name=$2
-vmail_dir=$(docker exec -ti $container_name postconf | grep ^virtual_mailbox_base | awk '{print $NF}');
-vmailboxes=$(docker inspect -f '{{ .HostConfig.Binds }}' $container_name | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}' | tr -d '[');
-if [ -f $vmailboxes/virtual_mailboxes ]; then
-	if ! grep -q "$email" $vmailboxes/virtual_mailboxes; then
+if [ ! $(docker ps -q -f "name=^${container_name:-postfix}$") ]; then echo "Container ${container_name:-postfix} does not exist!"; exit 1; fi
+vmail_config=$(docker inspect -f '{{ .HostConfig.Binds }}' ${container_name:-postfix} | sed 's/ /\n/g' | grep /config | awk -F: '{print $1}' | tr -d '[');
+if ! grep -q "$domain" $vmail_config/virtual_domains; then
+        echo -n "Adding domain $domain to virtual domain configuration file ($vmail_config/virtual_domains).."
+        echo "$domain" >> $vmail_config/virtual_domains
+        echo "done."
+	docker restart ${container_name:-postfix}
+else
+        echo "Domain $domain already exists in the virtual domain configuration file. Maybe you need to restart the Docker container?"
+fi
+if [ -f $vmail_config/virtual_mailboxes ]; then
+	if ! grep -q "$email" $vmail_config/virtual_mailboxes; then
 		echo -n "Adding mailbox $email to virtual mailbox configuration file.."
-		echo "$email $domain/$username/" >> $vmailboxes/virtual_mailboxes
+		echo "$email $domain/$username/" >> $vmail_config/virtual_mailboxes
 		echo "done."
-		echo "Restart Docker container to reload configuration changes."
+		docker restart ${container_name:-postfix}
 	else
 		echo "E-mail $email already exists in the virtual mailbox configuration file. Maybe you need to restart the Docker container?"
 	fi
 else
-	echo "Virtual mailbox configuration file ($vmailboxes/virtual_mailboxes) could not be found!"
+	echo "Virtual mailbox configuration file ($vmail_config/virtual_mailboxes) could not be found!"
 	exit 1
 fi
